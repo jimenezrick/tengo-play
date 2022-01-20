@@ -1,0 +1,5 @@
+Run:
+
+$ go run main.go
+$ go test -bench=.
+$ go test -bench=. -cpu=1
