@@ -3,6 +3,7 @@ package main
 import (
 	"encoding/json"
 	"fmt"
+	"os"
 
 	"github.com/d5/tengo/v2"
 	"github.com/d5/tengo/v2/parser"
@@ -32,6 +33,44 @@ var o = map[string]interface{}{
 }
 
 func main() {
+	var cmd string
+	if len(os.Args) > 1 {
+		cmd = os.Args[1]
+	}
+
+	switch cmd {
+	case "burn-true":
+		burnTengoTrue()
+	case "burn-lookup":
+		burnTengo_50_array_lookup()
+	default:
+		dump()
+	}
+}
+
+func burnTengoTrue() {
+	code := `true`
+	program := prepareTengo(code, nil)
+	for {
+		program.Clone().Run()
+	}
+}
+
+func burnTengo_50_array_lookup() {
+	code := `
+fmt := import("fmt")
+enum := import("enum")
+
+l := [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50]
+r := enum.any(l, func(k, v) { return v == 1001})
+`
+	program := prepareTengo(code, nil)
+	for {
+		program.Clone().Run()
+	}
+}
+
+func dump() {
 	code := `
 fmt := import("fmt")
 

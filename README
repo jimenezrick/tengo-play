@@ -1,5 +1,12 @@
 Run:
 
 $ go run main.go
-$ go test -bench=.
-$ go test -bench=. -cpu=1
+$ go test -bench=. -benchmem -cpu=1,2,4
+
+$ go test -bench=BenchmarkTengo_500_map_lookup -test.benchtime=5s -cpuprofile profile_cpu.out
+$ go tool pprof profile_cpu.out
+$ GOMAXPROCS=1 perf stat go run . burn-lookup
+
+See:
+- https://go.dev/blog/pprof
+- https://dave.cheney.net/high-performance-go-workshop/gophercon-2019.html
