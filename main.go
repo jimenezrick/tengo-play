@@ -43,6 +43,8 @@ func main() {
 		burnTengoTrue()
 	case "burn-lookup":
 		burnTengo_50_array_lookup()
+	case "closure":
+		closure()
 	default:
 		dump()
 	}
@@ -152,6 +154,17 @@ fmt.println("--- END ---------------")
 {a: 12.34, b: "bar"}
 [1, false, "foo"]
 `
+	symbolTable := tengo.NewSymbolTable()
+	comp := buildCompiler(code, symbolTable, nil)
+
+	fmt.Println("* VM instructions:")
+	pp.Println(comp.Bytecode().FormatInstructions())
+	fmt.Println("* VM constants table:")
+	pp.Println(comp.Bytecode().FormatConstants())
+	fmt.Println("==================================")
+}
+
+func buildCompiler(code string, symbolTable *tengo.SymbolTable, constants []tengo.Object) *tengo.Compiler {
 	fileSet := parser.NewFileSet()
 	srcFile := fileSet.AddFile("(main)", -1, len(code))
 	p := parser.NewParser(srcFile, []byte(code), nil)
@@ -160,14 +173,11 @@ fmt.println("--- END ---------------")
 		panic(err)
 	}
 
-	comp := tengo.NewCompiler(srcFile, nil, nil, nil, nil)
+	modules := stdlib.GetModuleMap(stdlib.AllModuleNames()...)
+	comp := tengo.NewCompiler(srcFile, symbolTable, constants, modules, nil)
 	if err := comp.Compile(file); err != nil {
 		panic(err)
 	}
 
-	fmt.Println("* VM instructions:")
-	pp.Println(comp.Bytecode().FormatInstructions())
-	fmt.Println("* VM constants table:")
-	pp.Println(comp.Bytecode().FormatConstants())
-	fmt.Println("==================================")
+	return comp
 }
