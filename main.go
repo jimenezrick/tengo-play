@@ -3,6 +3,9 @@ package main
 import (
 	"encoding/json"
 	"fmt"
+	"log"
+	"net/http"
+	_ "net/http/pprof"
 	"os"
 
 	"github.com/d5/tengo/v2"
@@ -33,6 +36,11 @@ var o = map[string]interface{}{
 }
 
 func main() {
+	// Open http://localhost:6060/debug/pprof/
+	go func() {
+		log.Println(http.ListenAndServe("localhost:6060", nil))
+	}()
+
 	var cmd string
 	if len(os.Args) > 1 {
 		cmd = os.Args[1]
